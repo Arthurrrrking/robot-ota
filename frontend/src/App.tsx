@@ -69,7 +69,7 @@ export default function App() {
         {/* Sidebar */}
         {(!isMobile || isMobileMenuOpen) && (
           <div className={`
-            ${isMobile ? 'fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out' : 'w-64'}
+            ${isMobile ? 'fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out bg-white border-r border-gray-200' : 'w-64'}
             ${isMobile && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}
           `}>
             <Sidebar 
