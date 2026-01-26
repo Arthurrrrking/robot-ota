@@ -30,7 +30,18 @@ export default function App() {
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
     }
-  }, [currentPage, isMobileMenuOpen]);
+  }, [currentPage]);
+
+  // Handle menu toggle
+  const handleMenuToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMobileMenuOpen(prev => !prev);
+  };
+
+  // Handle overlay click
+  const handleOverlayClick = () => {
+    setIsMobileMenuOpen(false);
+  };
 
   const renderContent = () => {
     switch (currentPage) {
@@ -56,7 +67,7 @@ export default function App() {
         <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-50">
           <h1 className="text-xl font-semibold text-gray-900">Robot OTA System</h1>
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={handleMenuToggle}
             className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           >
@@ -67,10 +78,12 @@ export default function App() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        {(!isMobile || isMobileMenuOpen) && (
+        {(isMobile ? isMobileMenuOpen : true) && (
           <div className={`
-            ${isMobile ? 'fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out bg-white border-r border-gray-200' : 'w-64'}
-            ${isMobile && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}
+            ${isMobile 
+              ? 'fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 shadow-lg' 
+              : 'w-64 bg-white border-r border-gray-200'}
+            transition-all duration-300 ease-in-out
           `}>
             <Sidebar 
               currentPage={currentPage} 
@@ -83,7 +96,7 @@ export default function App() {
         {isMobile && isMobileMenuOpen && (
           <div 
             className="fixed inset-0 bg-black bg-opacity-50 z-30"
-            onClick={() => setIsMobileMenuOpen(false)}
+            onClick={handleOverlayClick}
           />
         )}
 
