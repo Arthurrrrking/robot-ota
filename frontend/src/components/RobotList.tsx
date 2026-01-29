@@ -1,8 +1,20 @@
 import { Search, Filter, MoreVertical, Circle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export function RobotList() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  const checkIfMobile = useCallback(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  useEffect(() => {
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, [checkIfMobile]);
 
   const robots = [
     { id: 'RBT-1247', name: 'Warehouse Bot Alpha', model: 'WB-500', version: 'v2.4.1', status: 'online', lastSeen: '2 min ago', location: 'Warehouse A' },
@@ -64,73 +76,76 @@ export function RobotList() {
         </div>
 
         {/* Mobile Card View */}
-        <div className="sm:hidden divide-y divide-gray-200">
-          {filteredRobots.map((robot) => (
-            <div key={robot.id} className="p-4 hover:bg-gray-50">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="font-medium text-gray-900">{robot.name}</h3>
-                  <p className="text-sm text-gray-500">{robot.id}</p>
+        {isMobile && (
+          <div className="divide-y divide-gray-200">
+            {filteredRobots.map((robot) => (
+              <div key={robot.id} className="p-4 hover:bg-gray-50">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 className="font-medium text-gray-900">{robot.name}</h3>
+                    <p className="text-sm text-gray-500">{robot.id}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Circle size={8} fill="currentColor" className={getStatusColor(robot.status)} />
+                    <span className="text-sm capitalize text-gray-600">{robot.status}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Circle size={8} fill="currentColor" className={getStatusColor(robot.status)} />
-                  <span className="text-sm capitalize text-gray-600">{robot.status}</span>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <p className="text-gray-500">Model</p>
+                    <p className="font-medium">{robot.model}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Version</p>
+                    <p className="font-medium">{robot.version}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Location</p>
+                    <p className="font-medium">{robot.location}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Last Seen</p>
+                    <p className="font-medium">{robot.lastSeen}</p>
+                  </div>
+                </div>
+                <div className="mt-3 flex justify-end">
+                  <button className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center">
+                    <MoreVertical size={20} />
+                  </button>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <p className="text-gray-500">Model</p>
-                  <p className="font-medium">{robot.model}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Version</p>
-                  <p className="font-medium">{robot.version}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Location</p>
-                  <p className="font-medium">{robot.location}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Last Seen</p>
-                  <p className="font-medium">{robot.lastSeen}</p>
-                </div>
-              </div>
-              <div className="mt-3 flex justify-end">
-                <button className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center">
-                  <MoreVertical size={20} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Desktop Table View */}
-        <div className="hidden sm:block overflow-x-auto">
+        {!isMobile && (
+          <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Robot ID
                 </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Model
                 </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Version
                 </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Location
                 </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Last Seen
                 </th>
-                <th className="px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 md:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -138,31 +153,31 @@ export function RobotList() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRobots.map((robot) => (
                 <tr key={robot.id} className="hover:bg-gray-50">
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {robot.id}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {robot.name}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {robot.model}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {robot.version}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <Circle size={8} fill="currentColor" className={getStatusColor(robot.status)} />
                       <span className="text-sm capitalize">{robot.status}</span>
                     </div>
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {robot.location}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {robot.lastSeen}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm">
                     <button className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center">
                       <MoreVertical size={20} />
                     </button>
@@ -171,7 +186,8 @@ export function RobotList() {
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
